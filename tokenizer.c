@@ -2,6 +2,8 @@
  * tokenizer.c
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
  * Tokenizer type.  You need to fill in the type as part of your implementation.
@@ -66,6 +68,22 @@ char *TKGetNextToken( TokenizerT * tk ) {
  */
 
 int main(int argc, char **argv) {
-
-  return 0;
+	
+	if (argc == 1)				/*In case you haven't given any arguments*/
+	{
+		fprintf(stdout,"No arguments given!\n");
+		return 0;
+	}
+	
+	char str[80] = "123123 123      132                 2123";
+	
+	char *token = strtok(str,"\t");
+	
+	while(token != NULL) 
+	{
+		printf("%s\n", token );
+    	token = strtok(NULL, "\t");
+	}	
+	
+	return 0;
 }
