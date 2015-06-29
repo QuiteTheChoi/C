@@ -128,6 +128,9 @@ int isZeroOrNot(char x) {
 	else if (x >= '0' && x <= '9') {
 		curr_State = int_float;
 	}
+	else if (x == '.') {
+		curr_State = mightBeFloat;
+	}
 	else {
 		curr_State = malformed;
 	}
@@ -158,7 +161,7 @@ int isDigitDotOrE (char x) {
 	else if (x == 'e' || x == 'E') {
 		curr_State = mightBeFloat_onlyints_neg_pos;
 	}
-	else if (x >= '0' || x <= '9') {
+	else if (x >= '0' && x <= '9') {
 	}
 	else {
 		curr_State = malformed;
@@ -214,7 +217,7 @@ int isMal(){
 int IdentifyToken (char *ptr) {
 	while (*ptr != '\0') {
 		switch(curr_State) {
-			case (malformed) {     /*temporary*/
+			case (malformed): {     /*temporary*/
 				isMal();
 				break;
 			}
@@ -314,13 +317,14 @@ int main(int argc, char **argv) {
 	TokenizerT *tokenizer = TKCreate (argv[1]);        /*creation of tokenizerT*/
 	
 	curr_State = undetermined;
-	char *token = TKGetNextToken(tokenizer);
+	char *token =TKGetNextToken(tokenizer);
 	char *status;
 	
 	while (token != 0) { 
 		IdentifyToken(token);
 		status = TKGetState();
-		fprintf(stdout,"%s: %s next\n",status,token);
+		fprintf(stdout,"%s: %s\n",status,token);
+		curr_State = undetermined;
 		token = TKGetNextToken(tokenizer);
 	}
 			
