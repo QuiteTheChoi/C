@@ -121,35 +121,6 @@ char *TKGetNextToken( TokenizerT * tk ) {
 }
 
 /*beginning of all states and function calls for states*/
-
-int isOctal(char x) {
-	if (x >= '0' && x <= '7') {
-		curr_State = mightBeOct;
-	}
-	else
-		curr_State = malformed;
-	return 0;
-}
-
-int isHex(char x) {
-	if (x >= '0' && x <= '9') {
-		curr_State = mightBeHex;
-	}
-	else
-		curr_State = malformed;
-	return 0;
-}
-
-int isDigitOrE(char x) {
-	if (x >= '0' && x <= '9') {
-		curr_State = mightBeFloat;
-	}
-	else if (x == 'e' || x == 'E') {
-		curr_State = mightBeFloat_onlyints_neg_pos
-	}
-	return 0;
-}
-
 int isZeroOrNot(char x) {
 	if (x == '0') {
 		curr_State = oct_hex_flaot_zero;
@@ -161,6 +132,63 @@ int isZeroOrNot(char x) {
 		curr_State = malformed;
 	}
 	
+	return 0;
+}
+
+int isOctal(char x) {
+	if (x >= '0' && x <= '7') {
+		continue;
+	}
+	else
+		curr_State = malformed;
+	return 0;
+}
+
+int isDigit(char x) {
+	if (x >= '0' && x <= '9') {
+		continue;
+	}
+	else
+		curr_State = malformed;
+	return 0;
+}
+
+int isDigitDotOrE (char x) {
+	if (x == '.') {
+		curr_State = mightBeFloat;
+	}
+	else if (x == 'e' || x == 'E') {
+		curr_State = mightBeFloat_onlyints_neg_pos;
+	}
+	else if (x >= '0' || x <= '9') {
+		continue;
+	}
+	else {
+		curr_State = malformed;
+	}
+	return 0;
+}
+
+int isDigitOrE(char x) {
+	if (x >= '0' && x <= '9') {
+		curr_State = mightBeFloat;
+	}
+	else if (x == 'e' || x == 'E'){
+		curr_State = mightBeFloat_onlyints_neg_pos;
+	}
+	else {
+		curr_State = malformed;
+	}
+	return 0;
+}
+
+int isDightOrSign(char x) {
+	if ((x >= '0' && x <= '9') || (x == '-' || x == '+')) {
+		curr_State	=  mightBeFloat_onlyints;
+	}
+	else {
+	curr_State = malformed;
+	}
 	return 0;
 }
 
@@ -194,12 +222,27 @@ int IdentifyToken (char *ptr) {
 			}
 			case (mightBeOct): {
 				isOctal(*ptr);
+				break;
 			}
 			case (mightBeHex): {
-				isHex(*ptr);
+				isDigit(*ptr);
+				break;
 			}
 			case (mightBeFloat): {
 				isDigitOrE(*ptr);
+				break;
+			}
+			case (mightBeFloat_onlyints_neg_pos): {
+				isDigitOrSign(*ptr);
+				break;
+			}
+			case (mightBeFloat_onlyints): {
+				isDigit(*ptr);
+				break;
+			}
+			case (int_float): {
+				isDigitDotOrE(*ptr);
+				break;
 			}
 			default:
 			break;
