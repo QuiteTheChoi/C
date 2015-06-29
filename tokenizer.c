@@ -68,6 +68,7 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
+	free ((void*)tk);
 }
 
 /*
@@ -327,6 +328,8 @@ int main(int argc, char **argv) {
 		curr_State = undetermined;
 		token = TKGetNextToken(tokenizer);
 	}
+	
+	TKDestroy(tokenizer);
 			
 	return 0;
 }
