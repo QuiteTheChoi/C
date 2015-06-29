@@ -123,7 +123,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
 /*beginning of all states and function calls for states*/
 int isZeroOrNot(char x) {
 	if (x == '0') {
-		curr_State = oct_hex_flaot_zero;
+		curr_State = oct_hex_float_zero;
 	}
 	else if (x >= '0' && x <= '9') {
 		curr_State = int_float;
@@ -137,7 +137,6 @@ int isZeroOrNot(char x) {
 
 int isOctal(char x) {
 	if (x >= '0' && x <= '7') {
-		continue;
 	}
 	else
 		curr_State = malformed;
@@ -146,7 +145,6 @@ int isOctal(char x) {
 
 int isDigit(char x) {
 	if (x >= '0' && x <= '9') {
-		continue;
 	}
 	else
 		curr_State = malformed;
@@ -161,7 +159,6 @@ int isDigitDotOrE (char x) {
 		curr_State = mightBeFloat_onlyints_neg_pos;
 	}
 	else if (x >= '0' || x <= '9') {
-		continue;
 	}
 	else {
 		curr_State = malformed;
@@ -182,7 +179,7 @@ int isDigitOrE(char x) {
 	return 0;
 }
 
-int isDightOrSign(char x) {
+int isDigitOrSign(char x) {
 	if ((x >= '0' && x <= '9') || (x == '-' || x == '+')) {
 		curr_State	=  mightBeFloat_onlyints;
 	}
