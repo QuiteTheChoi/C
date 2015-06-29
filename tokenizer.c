@@ -206,9 +206,18 @@ int isOctHexOrFloat(char x) {
 	return 0;
 }
 
+int isMal(){
+	return 0;    /*temporary*/
+}
+
+
 int IdentifyToken (char *ptr) {
 	while (*ptr != '\0') {
 		switch(curr_State) {
+			case (malformed) {     /*temporary*/
+				isMal();
+				break;
+			}
 			case(undetermined): {
 				isZeroOrNot(*ptr);
 				break;
@@ -250,6 +259,45 @@ int IdentifyToken (char *ptr) {
 	return 0;
 }
 
+char* TKGetState() {
+	switch (curr_State) {
+		case(malformed): {
+			return "ERROR";
+			break;
+		}
+		case (oct_hex_float_zero): {
+			return "ZERO";
+			break;
+		}
+		case (mightBeOct): {
+			return "OCTAL";
+			break;
+		}
+		case (mightBeHex): {
+			return "HEXADECIMAL";
+			break;
+		}
+		case (mightBeFloat): {
+			return "FLOAT";
+			break;
+		}
+		case (mightBeFloat_onlyints_neg_pos): {
+			return "FLOAT";
+			break;
+		}
+		case (mightBeFloat_onlyints): {
+			return "FLOAT";
+			break;
+		}
+		case (int_float): {
+			return "INTEGER";
+			break;
+		}
+		
+		default:
+		break;
+	}
+}
 /*
  * main will have a string argument (in argv[1]).
  * The string argument contains the tokens.
@@ -267,11 +315,12 @@ int main(int argc, char **argv) {
 	
 	curr_State = undetermined;
 	char *token = TKGetNextToken(tokenizer);
+	char *status;
 	
 	while (token != 0) { 
 		IdentifyToken(token);
-		fprintf(stdout,"%s next\n",token);
-		curr_State = undetermined;
+		status = TKGetState();
+		fprintf(stdout,"%s: %s next\n",status,token);
 		token = TKGetNextToken(tokenizer);
 	}
 			
