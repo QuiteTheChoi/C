@@ -15,14 +15,9 @@ enum states {
 	int_float,
 	oct_hex_float_zero,
 	mightBeOct,
-	isOct,
 	mightBeHex,
-	isHex,
-	isZero,
 	mightBeFloat,
-	isFloat,
 	mightBeFloat_onlyints_neg_pos,
-	isInt,
 	mightBeFloat_onlyints,
 } curr_State;
 
@@ -147,6 +142,14 @@ int isOctal(char x) {
 	return 0;
 }
 
+int isHex(char x) {
+	if ((x >= '0' && x <= '9') || (x >= 'a' && x <= 'f') || (x >= 'A' && x <= 'F')) {
+		}
+	else
+		curr_State = malformed;
+	return 0;
+}
+
 int isDigit(char x) {
 	if (x >= '0' && x <= '9') {
 	}
@@ -197,7 +200,7 @@ int isOctHexOrFloat(char x) {
 	if (x >= '0' && x <= '7') {
 		curr_State = mightBeOct;
 	}
-	else if (x == 'x' || x == 'X') {
+	else if (x == 'x' || x == 'X') { 
 		curr_State = mightBeHex;
 	}
 	else if (x == '.') {
@@ -235,7 +238,7 @@ int IdentifyToken (char *ptr) {
 				break;
 			}
 			case (mightBeHex): {
-				isDigit(*ptr);
+				isHex(*ptr);
 				break;
 			}
 			case (mightBeFloat): {
@@ -326,6 +329,7 @@ int main(int argc, char **argv) {
 		status = TKGetState();
 		fprintf(stdout,"%s: %s\n",status,token);
 		curr_State = undetermined;
+		free(token);
 		token = TKGetNextToken(tokenizer);
 	}
 	
