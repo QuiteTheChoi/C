@@ -1,0 +1,99 @@
+Jonathan Caverly Tokenizer.c testcases
+
+./tokenizer is assumed to be entered at the beggining of each case.
+
+case 1
+""
+Output: Nothing
+
+case 2
+" "
+Output: Nothing
+
+case 3
+"1" 
+Output: INTEGER: 1 
+
+case 4
+"10"
+Output: INTEGER: 10 
+
+case 5
+"0"
+Output: ZERO: 0
+
+case 6
+"0x"
+Output: HEXADECIMAL: 0x
+
+case 7
+"1.222"
+Output: FLOAT: 1.222
+
+case 8
+"asd"
+Output: IERROR: asd Error caused by: [0x61]
+
+case 9
+"0x2"
+Output: HEXADECIMAL: 0x2 
+
+case 10
+"000"
+Output: OCTAL 000
+
+case 11
+"123 123 122"
+Output: INTEGER: 123 
+INTEGER: 123 
+INTEGER: 122
+
+case 11
+" 123 123 122 "
+Output: INTEGER: 123 
+INTEGER: 123 
+INTEGER: 122
+
+case 12
+" 0 x  123 123 122 "
+Output: ZERO: 0 
+ERROR: x Error caused by: [0x78]
+INTEGER: 123 
+INTEGER: 123 
+INTEGER: 122 
+
+case 13 
+" 0700 1234 3.14159e-10 "
+Output: OCTAL: 0700 
+INTEGER: 1234 
+FLOAT: 3.14159e-10 
+
+case 14
+"123 2123e12 1.3333e-10   2.2-e10   3.3+e1100  4.7e+111    2.12 ssss   2.111e  asd 1233\a   00   0.123e10 0e1  -100 -1.0012e10"
+NOTE: The \a is interpreted as an unprintable escape character.
+Output: INTEGER: 123 
+FLOAT: 2123e12 
+FLOAT: 1.3333e-10 
+ERROR: 2.2-e10 Error caused by: [0x2d]
+ERROR: 3.3+e1100 Error caused by: [0x2b]
+FLOAT: 4.7e+111 
+FLOAT: 2.12 
+ERROR: ssss Error caused by: [0x73]
+FLOAT: 2.111e 
+ERROR: asd Error caused by: [0x61]
+ERROR: 1233 Error caused by: [0x7]
+OCTAL: 00 
+FLOAT: 0.123e10 
+ERROR: 0e1 Error caused by: [0x65]
+INTEGER: -100 
+FLOAT: -1.0012e10 
+
+
+
+
+
+ 
+
+
+
+
