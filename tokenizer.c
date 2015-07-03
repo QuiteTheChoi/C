@@ -87,7 +87,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
 	char *ptr = tk -> myString;
 	
 	if (start > arrBound) { 			/*reached the end of char[] or out of bounds*/ 
-	return 0;										/*return 0?*/	
+	return 0;										
 	}
 	
 	while (isspace(ptr[start]) && start < arrBound) {			/*clear out white spaces first or reached end of array before nul*/
