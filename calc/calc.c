@@ -6,6 +6,7 @@ struct number_ {
 	char type;
 	char *numString;
 	int negative;
+	int equiv; 
 };
 
 typedef struct number_ number;
@@ -156,10 +157,21 @@ int validateToken(char* num) {
 	return 1;
 }
 
-number* numCreate (char* ptr) {
-	
-	
-	return 
+number* numCreate (char* str) {
+	number *ptr = (number*) malloc (sizeof(number));
+		
+	if (str[0] == '-') {
+		ptr -> negative = 1;
+		ptr -> type = str[1];
+		ptr -> numString = strdup(&str[2]);
+	}
+	else {
+		ptr -> negative = 0;
+		ptr -> type = str[0];
+		ptr -> numString = strdup(&str[1]);
+	}
+		
+	return ptr;
 }
 /*main will take in five arguments to perform a calculation called by user. They will be able to input numbers 
  * in octal, hexadecimal, decimal and binary. They will also be able to output answers in one of those four types. 
