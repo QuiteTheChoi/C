@@ -24,7 +24,7 @@ enum states {
 
 int isBinary(char* numB) {
 	while (*numB != '\0') {
-		if (*numB != '0' || *numB != '1') {
+		if (*numB != '0' && *numB != '1') {
 			return 1;
 		}
 		numB++;
@@ -62,12 +62,19 @@ int isHex (char* numH) {
 					return 1;
 			}
 			case(mightBeHexThirdChar): {
-				if (*numH >= '0' && *numH <= '9') {
+				if ((*numH >= '0' && *numH <= '9')|| (*numH >= 'a' && *numH <= 'f') || (*numH >= 'A' && *numH <= 'F'))  {
 					curr_State = mightBeHex;
 					break;
 				}
 				else
 					return 1;
+			}
+			case(mightBeHex): {
+				if ((*numH >= '0' && *numH <= '9')|| (*numH >= 'a' && *numH <= 'f') || (*numH >= 'A' && *numH <= 'F'))  {
+					break;
+				}
+				else
+				return 1;
 			}
 		}
 		numH++;
@@ -108,7 +115,7 @@ int isDecimal(char* numD) {
  * Returns a 1 if number entered is found to be an invalid format. */
 int validateToken(char* num) {
 	char tempType;
-	char* tempNum[strlen(num)];
+	char tempNum[strlen(num)];
 	
 	if (num[0] == '-' && strlen(num) <= 2) {         	//to have a negative sign means you must have at least a '-', a type (b,o,x,d) 
 		return 1;										// and at least one digit.
@@ -148,6 +155,12 @@ int validateToken(char* num) {
 	curr_State = undetermined;
 	return 1;
 }
+
+number* numCreate (char* ptr) {
+	
+	
+	return 
+}
 /*main will take in five arguments to perform a calculation called by user. They will be able to input numbers 
  * in octal, hexadecimal, decimal and binary. They will also be able to output answers in one of those four types. 
  * negative numbers maybe used.  */
@@ -157,18 +170,18 @@ int main (int argc, char** argv) {
 	
 	if (argc < 5) {
 		fprintf(stdout,"Not enough arguments!\n");
-		stop = 1;
+		return 0;
 	}
 	else if (argc > 5) {
 		fprintf(stdout,"Too many arguments!\n");
-		stop = 1;
+		return 0;
 	}
 	
-	if ((strlen(argv[1]) != 1) || (argv[1][0] != '+' || argv[1][0] != '-' || argv[1][0] != '*')) {
+	if (((int)strlen(argv[1]) != 1) || (argv[1][0] != '+' && argv[1][0] != '-' && argv[1][0] != '*')) {
 		fprintf(stdout,"Invalid operation entered, please try again\n");
 		stop = 1;
 	}
-	
+		
 	if (validateToken(argv[2]) == 1 && validateToken(argv[3]) == 1) {
 		fprintf(stdout,"First and second number arguments are invalid\n");
 		stop = 1;
@@ -182,7 +195,7 @@ int main (int argc, char** argv) {
 		stop = 1;
 	}
 	
-	if ((strlen(argv[4]) != 1) || (argv[4][0] != 'b' || argv[4][0] != 'o' || argv[4][0] != 'x'|| argv[4][0] != 'd')) {
+	if ((strlen(argv[4]) != 1) || (argv[4][0] != 'b' && argv[4][0] != 'o' && argv[4][0] != 'x'&& argv[4][0] != 'd')) {
 		fprintf(stdout,"Invalid output conversion entered, please try again\n");
 		stop = 1;
 	}
@@ -190,9 +203,9 @@ int main (int argc, char** argv) {
 	if (stop == 1) {
 		return 0;
 	}
-	
-	//number* num1 = numCreate();
-	//number* num2 = numCreate();
+		
+	number* num1 = numCreate(argv[2]);
+	number* num2 = numCreate(argv[3]);
 	
 	//result = solveEqn(argv[1][0],num1,num2);    //temporary 
 	
