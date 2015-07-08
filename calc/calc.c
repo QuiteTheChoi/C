@@ -11,15 +11,15 @@ struct number_ {
 typedef struct number_ number;
 
 enum states {
-	undetermined;
-	mightBeDecFirstNum;
-	mightBeDec;
-	mightBeBin;
-	mightBeOct;
-	mightBeHexFirstChar;
-	mightBeHexSecChar;
-	mightBeHexThirdChar;
-	mightBeHex;	
+	undetermined,
+	mightBeDecFirstNum,
+	mightBeDec,
+	mightBeBin,
+	mightBeOct,
+	mightBeHexFirstChar,
+	mightBeHexSecChar,
+	mightBeHexThirdChar,
+	mightBeHex,
 } curr_State;
 
 int isBinary(char* numB) {
