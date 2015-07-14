@@ -64,49 +64,6 @@ int isHex (char* numH) {
 	return 0;
 }
 
-/*int isHex (char* numH) {
-	while (*numH != '\0') {
-		switch(curr_State) {
-			case(mightBeHexFirstChar): {
-				if (*numH == '0') {
-					curr_State = mightBeHexSecChar;
-					break;
-				}
-				else
-					return 1;
-			}
-			case(mightBeHexSecChar): {
-				if (*numH == 'x' || *numH == 'X') {
-					curr_State = mightBeHexThirdChar;
-					break;
-				}
-				else
-					return 1;
-			}
-			case(mightBeHexThirdChar): {
-				if ((*numH >= '0' && *numH <= '9')|| (*numH >= 'a' && *numH <= 'f') || (*numH >= 'A' && *numH <= 'F'))  {
-					curr_State = mightBeHex;
-					break;
-				}
-				else
-					return 1;
-			}
-			case(mightBeHex): {
-				if ((*numH >= '0' && *numH <= '9')|| (*numH >= 'a' && *numH <= 'f') || (*numH >= 'A' && *numH <= 'F'))  {
-					break;
-				}
-				else
-				return 1;
-			}
-		}
-		numH++;
-	}
-	if (curr_State == mightBeHexFirstChar || curr_State == mightBeHexSecChar || curr_State == mightBeHexThirdChar)
-		return 1;
-	
-	return 0;
-}*/
-
 int isDecimal(char* numD) {
 	while (*numD != '\0') {
 		switch(curr_State) {
@@ -188,17 +145,34 @@ int strToInt(number *ptr) {
 	char* num = ptr -> numString;
 	int len = (int)strlen(ptr -> numString);
 	
-	for (num; *num != '\0'; num++) {
+	/*for (num; *num != '\0'; num++) {
 		result = result * 10 + (*num - '0');
 		if (resultTemp > result) {
 			return 1;
 		}
 		resultTemp = result;
+	}*/
+	
+	for (num; *num != '\0'; num++) {
+		switch(ptr -> negative) {
+			case(0): {
+				result = result * 10 + (*num - '0');
+				if (resultTemp > result) {
+					return 1;
+				}
+				break;
+			}
+			case(1): {
+				result = result * 10 + ((*num - '0')*-1);
+				if (resultTemp < result) {
+					return 1;
+				}
+				break;
+			}
+		}
+		resultTemp = result;
 	}
 	
-	if (ptr -> negative == 1) {
-		result = result*-1;
-	} 	
 	ptr -> equiv = result;
 	return 0;
 }
@@ -209,15 +183,24 @@ int binToInt(number* ptr) {
 	int result = 0;
 	int resultTemp = 0;
 	for (numB; *numB != '\0'; numB++) {
-		result = result * 2 + (*numB - '0');
-		if (resultTemp > result) {
-			return 1;
+		switch(ptr -> negative) {
+			case(0): {
+				result = result * 2 + (*numB - '0');
+				if (resultTemp > result) {
+					return 1;
+				}
+				break;
+			}
+			case(1): {
+				result = result * 2 + ((*numB - '0')*-1);
+				if (resultTemp < result) {
+					return 1;
+				}
+				break;
+			}
 		}
 		resultTemp = result;
 	}
-	
-	if (ptr -> negative == 1)
-		result = result*-1;
 	
 	ptr -> equiv = result;
 	
@@ -229,15 +212,24 @@ int octToInt(number* ptr) {
 	int result = 0;
 	int resultTemp = 0;
 	for (numO; *numO != '\0'; numO++) {
-		result = result * 8 + (*numO - '0');
-		if (resultTemp > result) {
-			return 1;
+		switch(ptr -> negative) {
+			case(0): {
+				result = result * 8 + (*numO - '0');
+				if (resultTemp > result) {
+					return 1;
+				}
+				break;
+			}
+			case(1): {
+				result = result * 8 + ((*numO - '0')*-1);
+				if (resultTemp < result) {
+					return 1;
+				}
+				break;
+			}
 		}
 		resultTemp = result;
 	}
-	
-	if (ptr -> negative == 1)
-		result = result*-1;
 	
 	ptr -> equiv = result;
 	
@@ -278,16 +270,25 @@ int hexToInt(number* ptr) {
 		else if (*numX == 'f' || *numX == 'F') {
 			hexNum = 15;
 		}
-		result = result + hexNum*(int)pow(16,y);
-		if (resultTemp > result) {
-			return 1;
+		switch(ptr -> negative) {
+			case(0): {
+				result = result + hexNum*(int)pow(16,y);
+				if (resultTemp > result) {
+					return 1;
+				}
+				break;
+			}
+			case(1): {
+				result = result + (hexNum*(int)pow(16,y)*-1);
+				if (resultTemp < result) {
+					return 1;
+				}
+				break;
+			}
 		}
 		resultTemp = result;
 		numX--;
 	}
-	
-	if (ptr -> negative == 1)
-		result = result*-1;
 	
 	ptr -> equiv = result;
 	
@@ -374,15 +375,46 @@ char* toBinary(int ans) {
 		return result;
 	}
 	
-	if (ans < 0)
-		ans = ans*-1;
-	
 	while (ans != 0) {
 		int b = ans%2;
+		if (b < 0)
+			b = b*-1;
 		printf("b is: %d\n",b);
 		result[i] = b + '0';
 		i++;
 		ans = ans/2;		
+	}
+	
+	if (mem < 0) {
+		result[i] = '-';
+		i++;
+	}
+	
+	result[i] = '\0';
+	
+	reverseStr(result);
+	
+	return result;
+}
+
+char* toDec(int ans) {
+	char* result = (char*) malloc(sizeof(char)*33);
+	int i = 0;
+	int mem = ans;
+	
+	if (ans == 0) {
+		result[0] = '0';
+		result[1] = '\0';
+		return result;
+	}
+	
+	while (ans != 0) {
+		int b = ans%10;
+		if (b < 0)
+			b = b*-1;
+		result[i] = b + '0';
+		i++;
+		ans = ans/10;		
 	}
 	
 	if (mem < 0) {
@@ -408,11 +440,10 @@ char* toOctal(int ans) {
 		return result;
 	}
 	
-	if (ans < 0)
-		ans = ans*-1;
-	
 	while (ans != 0) {
 		int b = ans%8;
+		if (b < 0)
+			b = b*-1;
 		result[i] = b + '0';
 		i++;
 		ans = ans/8;		
@@ -446,9 +477,10 @@ char* toHexa(int ans) {
 	
 	while (ans != 0) {
 		int b = ans%16;
+		if (b < 0)
+			b = b*-1;
 		if (b == 10) {
 			result[i] = 'a';
-			printf("the letter assigned is %c\n", result[i]);
 		}
 		else if (b == 11) {
 			result[i] = 'b';
@@ -476,6 +508,8 @@ char* toHexa(int ans) {
 		result[i] = '-';
 		i++;
 	}
+	
+	
 	
 	result[i] = '\0';
 	reverseStr(result);
@@ -508,6 +542,40 @@ char* convertAns (char type, int ans) {
 		return toHexa(ans);
 	if (type == 'o' || type == 'O')
 		return toOctal(ans);
+	if (type == 'd' || type == 'D')
+		return toDec(ans);
+}
+
+int checkResult(char type, int ans, number* num1, number* num2) {
+	int ansTemp = 0;
+			
+	if (type == '+') {
+		printf("1");
+		if ((num1 -> negative == 1)&&(num2 -> negative == 1)) {
+			if ((ans > num1 -> equiv)||(ans > num2 -> equiv))
+				return 1;
+		}
+		else if ((num1 -> negative == 0)&&(num2 -> negative == 0)) {
+			if ((ans < num1 -> equiv)||(ans < num2 -> equiv))
+				return 1;
+		}
+	}
+	if (type == '-'){
+		if ((num1 -> negative == 0)&&(num2 -> negative == 1)) {
+			if (ans < num1 -> equiv)
+				return 1;
+			}
+		else if ((num1 -> negative == 1) && (num2 -> negative == 0)) {
+			if (ans > num1 -> equiv)
+				return 1;		
+		}		
+	}
+	if (type == '*') {
+		ansTemp =  ans/(num1 -> equiv);
+		if (ansTemp != num2-> equiv)
+		return 1;
+	}
+	return 0;
 }
 /*main will take in five arguments to perform a calculation called by user. They will be able to input numbers 
  * in octal, hexadecimal, decimal and binary. They will also be able to output answers in one of those four types. 
@@ -545,7 +613,7 @@ int main (int argc, char** argv) {
 		stop = 1;
 	}
 	
-	if ((strlen(argv[4]) != 1) || (argv[4][0] != 'b' && argv[4][0] != 'o' && argv[4][0] != 'x'&& argv[4][0] != 'd')) {
+	if ((strlen(argv[4]) != 1) || (argv[4][0] != 'b' && argv[4][0] != 'o' && argv[4][0] != 'x'&& argv[4][0] != 'd' &&argv[4][0] != 'B' && argv[4][0] != 'O' && argv[4][0] != 'X' && argv[4][0] != 'D')) {
 		fprintf(stdout,"Invalid output conversion entered, please try again\n");
 		stop = 1;
 	}
@@ -571,22 +639,25 @@ int main (int argc, char** argv) {
 	}
 	
 	printf("Value stored in num1: %d\n",num1 -> equiv);
-	printf("Value stored in num1: %d\n",num2 -> equiv);
+	printf("Value stored in num2: %d\n",num2 -> equiv);
 	
-	result = solveEqn(argv[1][0],argv[4][0],num1,num2);  
+	if ((num1 -> equiv == 0 || num2 -> equiv) && argv[1][0] == '*') {
+		printf("RESULT: %c0",argv[4][0]);
+		return 0;
+	} 
+	
+	result = solveEqn(argv[1][0],argv[4][0],num1,num2); 
+	
+	if (checkResult(argv[1][0],result,num1,num2)==1) {
+		printf("The answer is longer than 32 bits\n");
+		return 0; 
+	}
 	
 	printf("Decimal answer is: %d\n",result);
 	
-	if (argv[4][0] == 'd') {
-		printf("RESULT: %c%d\n",argv[4][0],result);
-	}
-	else {
-		resultStr = convertAns(argv[4][0],result);
-		printf("RESULT: %c%s\n",argv[4][0],resultStr);
-		free (resultStr);
-	}
-	
-	//delete(num1,num2);
+	resultStr = convertAns(argv[4][0],result);
+				
+	//delete(num1,num2,resultStr);
 	
 	return 0;
 }

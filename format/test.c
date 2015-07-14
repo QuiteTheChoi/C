@@ -5,7 +5,9 @@
 
 int main(int argc, char** argv)
 {
-	float ans = 1.572584*pow(2,96-127);
+	
+	
+	float ans = 0.00000000000001;
 	printf("%f\n",ans);
 	return 0;
 }
