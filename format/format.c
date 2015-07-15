@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 
+//Checks to make the bit string is 32 bits
 int isBinary(char* ptr) {
 	if (strlen(ptr) != 32)
 		return 1;
@@ -15,6 +16,7 @@ int isBinary(char* ptr) {
 	return 0;
 }
 
+//Reverses the string
 int reverseStr(char* str) {
    int i = strlen(str)-1;
    int j = 0;
@@ -32,6 +34,7 @@ int reverseStr(char* str) {
    return 0;
 }
 
+//Converts the bit string to two's complement integer
 char* convertToInt(char* ptr) {
 	int i = 0;
 	int result = 0;
@@ -99,6 +102,7 @@ char* convertToInt(char* ptr) {
 	return intResult;
 }
 
+//Converts the bit string to single precision floating-point format
 char* convertToFloat(char* ptr) {
 	int negative;
 	int exp = 0;
