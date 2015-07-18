@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "format.h"
 
 //Checks to make the bit string is 32 bits
 int isBinary(char* ptr) {
@@ -52,7 +53,6 @@ char* convertToInt(char* ptr) {
 		if (*temp == '1') {
 			*temp = '0';
 		}
-		printf("%s\n",ptr);
 		reverseStr(ptr);
 		
 		for (reverse; *reverse != '\0'; reverse++) {
@@ -64,17 +64,13 @@ char* convertToInt(char* ptr) {
 			}
 		}
 	}
-	printf("%s before addition\n",ptr);
 	for (ptr; *ptr != '\0'; ptr++) {
-		printf("%c\n",*ptr);
 		if (negative == 1) {
 			result = result * 2 + ((*ptr - '0')*-1);
 		}
 		else {
 			result = result * 2 + (*ptr - '0');
 		}
-		
-		printf("%d\n",result);
 	}
 	
 	if (result == 0) {
@@ -132,48 +128,52 @@ char* convertToFloat(char* ptr) {
 		mant = 0.0;
 	}
 	
-	printf("exponent calculated: %d\n",exp);
 	char* temp = &ptr[9];
 	int j = min;
 	for (j; j <= max; j++) {
 		if (*temp == '1') {
-			printf("i %d\n",j);
 			mant = mant + pow(2, (j*-1));
-			printf("%f\n",mant);
 		}
 		temp++;
 	}
 	
 	if (exp == 255) {
-		if (mant != 0.0) {
+		if (mant != 1.0) {
 			printf("NaN\n");
 			exit(0);
 		}
 		else {
 			if (negative == 1) {
-				printf("NINF\n");
+				printf("-inf\n");
 				exit(0);
 			}
 			else {
-				printf("PINF\n");
+				printf("inf\n");
 				exit(0);
 			}
 			
 		}
 		
 	}
+	else if (exp == 0 && mant == 0.0) {
+		if (negative == 0) {
+			printf("0.0e0\n");
+			exit(0);
+		}
+		else {
+			printf("-0.0e0\n");
+			exit(0);
+		}
+	}	
 	
-	printf("mant calculated: %f\n",mant);
 	float ans = mant*pow(2,(exp-127));
-	printf("ans calculated: %f\n",ans);
 	int exponent = 0;
 	float mantissa = ans;
 	exponent = log10(mantissa);
-	printf("exp calculated: %d\n",exponent);
+	
 	if (exponent < 0) {
 		exponent--;
 		int expTemp = exponent;
-		printf("HERE\n");
 		while (expTemp != 0) {
 			mantissa = mantissa *10;
 			expTemp++;
@@ -186,8 +186,6 @@ char* convertToFloat(char* ptr) {
 			expTemp--;
 		}
 	}
-	
-	printf("mant    %f n", mantissa);
 	
 	if (negative == 1) {
 		*floatResult = '-';
@@ -202,15 +200,12 @@ char* convertToFloat(char* ptr) {
 		}		
 		*floatResult = (int)mantissa%10 + '0';
 		mantissa = (mantissa - (*floatResult-'0'))*10;
-		printf("mans here: %f\n",mantissa);
 		floatResult++;
 	}
 	
 	*floatResult = 'e';
 	floatResult++;
-	
-	printf("exponent here is %d\n",exponent);
-	
+		
 	if (exponent == 0) {
 		*floatResult = '0';
 		floatResult++;
@@ -227,7 +222,6 @@ char* convertToFloat(char* ptr) {
 		if (b < 0) {
 			b = b*-1;
 		}
-		printf("b is %d\n",b);
 		*floatResult = b + '0';
 		floatResult++;
 	}
@@ -235,9 +229,6 @@ char* convertToFloat(char* ptr) {
 	reverseStr(reverseExp);
 	
 	*floatResult = '\0';
-	
-	printf("%f X 10^%d\n", mantissa, exponent);
-	printf("string is %s\n", tempResult);
 	
 	return tempResult;
 }
@@ -248,12 +239,12 @@ int main(int argc, char** argv) {
 	
 	if (argc < 3) {
 		printf("Not enough arguments!");
-		stop = 1;
+		return 0;
 	}
 	
 	if (argc > 3) {
 		printf("Too many arguments!");
-		stop = 1;
+		return 0;
 	}
 	
 	if (isBinary(argv[1]) == 1) {
