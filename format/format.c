@@ -102,7 +102,7 @@ char* convertToInt(char* ptr) {
 char* convertToFloat(char* ptr) {
 	int negative;
 	int exp = 0;
-	float mant = 1.0;
+	double mant = 1.0;
 	int expAllOnes = 1;
 	int mantHasOne = 0;
 	int count = 1;
@@ -166,9 +166,9 @@ char* convertToFloat(char* ptr) {
 		}
 	}	
 	
-	float ans = mant*pow(2,(exp-127));
+	double ans = mant*pow(2,(exp-127));
 	int exponent = 0;
-	float mantissa = ans;
+	double mantissa = ans;
 	exponent = log10(mantissa);
 	
 	if (exponent < 0) {
