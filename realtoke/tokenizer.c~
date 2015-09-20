@@ -25,6 +25,7 @@
 	mightBeFloat_FirstInt,
 	isAlphaNumeric, //Once a letter is found, it will be a word no matter what.
 	done,
+	reallyFinished,
 	mightBeLArrow,
 	isLessThanEqual,
 	mightBeLShift,
@@ -974,7 +975,10 @@ char *TKGetNextToken( TokenizerT * tk ) {
 			case (done): {
 				*token = '\0';
 				return tempToken;
-			}			
+			}
+			case (reallyFinished): {
+				return 0;
+			}
 			default:
 			break;
 		}
@@ -1346,13 +1350,13 @@ int main(int argc, char **argv) {
 	while (*tokenizer->myString != '\0') {
 		token = TKGetNextToken(tokenizer);
 		if (temp_State != isMultiComment && temp_State != isSingleComment && temp_State !=isEOC) { 
-			char* status = TKGetState(token);
-		    	fprintf(stdout,"%s: %s ",status,token);
-		    	if (temp_State == malformed) {
-		    	fprintf(stdout,"Error caused by: [0x%x]",err);
-		    	}
-            		printf("\n");
-        	}
+            char* status = TKGetState(token);
+            fprintf(stdout,"%s: %s ",status,token);
+            if (temp_State == malformed) {
+            fprintf(stdout,"Error caused by: [0x%x]",err);
+            }
+            printf("\n");
+        }
 	}
 	TKDestroy(tokenizer);
 	return 0;
