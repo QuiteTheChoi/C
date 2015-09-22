@@ -65,7 +65,6 @@
      isRightBrace,
      isLeftParenthesis,
      isRightParenthesis,
-     isConditionalOperator,
      isSingleComment,
      isMultiComment,
      mightBeEOC,
@@ -79,6 +78,7 @@
 char err;
 char* pc;
 int onlySpaces = 0;
+int end;
 
 struct TokenizerT_ {
 	int i;   			//Index number used later for creating tokens
@@ -128,11 +128,7 @@ void TKDestroy( TokenizerT * tk ) {
 }
 
 
-/*beginning of all states and function calls for states. Each function checks for the
- * current state and current char and makes a decision based on that. 
- * It may change states or figure out that the current token is in a finished
- * state. Each function is called upon based on the previous state the FSM
- * was in. */
+//beginning of all states and function calls for states
 
 /*set the global char to the malform char of token*/
 int malChar(char ptr) {
@@ -415,8 +411,7 @@ int chkAfterDoubleQuote(char x) {
 }
 
 /* this will check whether or not the first character of token is a valid char of
- * (1-9), (this will be int or float), '0' (which will be float, hex, oct or zero state) or a letter (word)
- * or one of the many C operators or a malformed character. */
+ * (1-9), '-' (this will be int or float), '0' (which will be float, hex, oct or zero state) or a letter (word) or a malformed character. */
 int isZeroLetterOrNot(char x) {
 	if (x == '0') {
 		curr_State = oct_hex_float_zero;
@@ -483,9 +478,6 @@ int isZeroLetterOrNot(char x) {
     }
     else if (x == ')') {
         curr_State = isRightParenthesis;
-    }
-    else if (x == '?' || x == ':') {
-        curr_State = isConditionalOperator;
     }
     else if (x == '\'') {
         curr_State = isSingleQuote;
@@ -897,12 +889,6 @@ char *TKGetNextToken( TokenizerT * tk ) {
                 curr_State = done;
                 return tempToken;
             }
-            case (isConditionalOperator): {
-                *token = '\0';
-                temp_State = curr_State;
-                curr_State = done;
-                return tempToken;
-            }
             case (isSingleComment): {
                 chkAfterSingleComment(*pc);
                 break;
@@ -997,8 +983,6 @@ char *TKGetNextToken( TokenizerT * tk ) {
 	return tempToken;
 }
 
-/*This function will check any word token to see if 
- * it a C keyword*/
 int isJavaKeyword(char *toke) {
     if (strcasecmp(toke, "if") == 0) {
         return 1;
@@ -1301,10 +1285,6 @@ char* TKGetState(char* token) {
             return "RIGHT PARENTHESIS";
             break;
         }
-        case (isConditionalOperator): {
-            return "CONDITIONAL OPERATOR";
-            break;
-        }
         case (isStructMember): {
             return "STRUCT MEMBER";
             break;
@@ -1343,6 +1323,7 @@ char* TKGetState(char* token) {
 	return 0;
 }
 
+
 /*
  * main will have a string argument (in argv[1]).
  * The string argument contains the tokens.
@@ -1356,8 +1337,10 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 		
-	TokenizerT *tokenizer = TKCreate (argv[1]);        //creation of tokenizerT	
-	curr_State = undetermined;	
+	TokenizerT *tokenizer = TKCreate (argv[1]);        //creation of tokenizerT
+	
+	curr_State = undetermined;
+	
 	char* token;
 	
 	while (*tokenizer->myString != '\0') {
